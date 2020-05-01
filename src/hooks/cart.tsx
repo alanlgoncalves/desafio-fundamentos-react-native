@@ -13,7 +13,7 @@ interface Product {
   title: string;
   image_url: string;
   price: number;
-  quantity: number;
+  quantity?: number;
 }
 
 interface CartContext {
@@ -45,6 +45,7 @@ const CartProvider: React.FC = ({ children }) => {
       const productIndex = products.findIndex(item => item.id === product.id);
 
       if (productIndex === -1) {
+        product.quantity = 1;
         setProducts([...products, product]);
       } else {
         const incrementProducts = products.map<Product>(item => {
@@ -88,15 +89,13 @@ const CartProvider: React.FC = ({ children }) => {
 
   const decrement = useCallback(
     async id => {
-      const decrementedProducts = products
-        .map<Product>(product => {
-          if (product.id === id && product.quantity > 1) {
-            product.quantity--;
-          }
+      const decrementedProducts = products.map<Product>(product => {
+        if (product.id === id && product.quantity > 1) {
+          product.quantity--;
+        }
 
-          return product;
-        })
-        .filter(product => product.quantity > 0);
+        return product;
+      });
 
       setProducts(decrementedProducts);
 
